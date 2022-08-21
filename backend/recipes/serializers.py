@@ -1,6 +1,7 @@
+from django.utils.translation import gettext_lazy as _
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from users.serializers import UserSerializer, BriefRecipeSerializer
+from users.serializers import BriefRecipeSerializer, UserSerializer
 
 from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                      ShoppingCart, Tag)
@@ -66,7 +67,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for field in required_filds:
             if not data.get(field):
                 raise serializers.ValidationError(
-                    f'{field}: Обязательное поле'
+                    f'{field}: _(Обязательное поле)'
                 )
 
         ingredients = data.get('ingredients')
@@ -78,18 +79,18 @@ class RecipeSerializer(serializers.ModelSerializer):
             for field in required_ingredient_filds:
                 if not ingredient.get(field):
                     raise serializers.ValidationError(
-                        f'{field}: Обязательное поле в ingredients'
+                        f'{field}: _(Обязательное поле в ingredients)'
                     )
             ingredient_id = ingredient.get('id')
             amount = ingredient.get('amount')
             if ingredient_id in ingredients_list:
                 raise serializers.ValidationError({
-                    'ingredients': 'Ингредиенты должны быть уникальными!'
+                    'ingredients': _('Ингредиенты должны быть уникальными!')
                 })
             ingredients_list.append(ingredient_id)
             if int(amount) <= 0:
                 raise serializers.ValidationError({
-                    'amount': 'Количество ингредиента должно быть больше нуля!'
+                    'amount': _('Неверное количество ингредиента')
                 })
 
         tags = data.get('tags')
@@ -97,7 +98,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             if tag in tags_list:
                 raise serializers.ValidationError({
-                    'tags': 'Тэги должны быть уникальными!'
+                    'tags': _('Тэги должны быть уникальными!')
                 })
             tags_list.append(tag)
 
@@ -185,7 +186,7 @@ class FavoriteSerializer(ModelSerializerWithRepresentashion):
         recipe = data['recipe']
         if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
             raise serializers.ValidationError(
-                {'errors': 'Рецепт уже в избранном!'}
+                {'errors': _('Рецепт уже в избранном!')}
             )
         return data
 
@@ -202,6 +203,6 @@ class ShoppingCartSerializer(ModelSerializerWithRepresentashion):
         if ShoppingCart.objects.filter(user=request.user,
                                        recipe=recipe).exists():
             raise serializers.ValidationError(
-                {'errors': 'Рецепт уже в корзине!'}
+                {'errors': _('Рецепт уже в корзине!')}
             )
         return data

@@ -1,9 +1,10 @@
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
+from django.utils.translation import gettext_lazy as _
+from recipes.models import Recipe
 from rest_framework import serializers
 
-from .models import User, Follow
-from recipes.models import Recipe
+from .models import Follow, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
-                ['Using "me" as username is forbidden.']
+                _('Недопустимое имя - "me".')
             )
         return value
 
@@ -47,13 +48,13 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('current_password', 'password', 'new_password')
+        fields = ('current_password', 'new_password')
 
     def validate_current_password(self, value):
         user = self.context['request'].user
         if not user.check_password(value):
             raise serializers.ValidationError(
-                "Current password is not correct"
+                _('Неверный текущий пароль')
             )
         return value
 

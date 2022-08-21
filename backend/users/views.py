@@ -1,15 +1,14 @@
+from django.utils.translation import gettext_lazy as _
 from recipes.pagination import CustomPageNumberPagination
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
-from django.utils.translation import gettext_lazy as _
-
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 from .models import Follow, User
-from .serializers import (ChangePasswordSerializer, UserMeSerializer,
-                          UserSerializer, SubscriptionsSerilaizer)
+from .serializers import (ChangePasswordSerializer, SubscriptionsSerilaizer,
+                          UserMeSerializer, UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -82,7 +81,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if follow.exists():
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {'errors': _('Нет подписки на этого автора')},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+
+        return Response({'errors': _('Нет подписки на этого автора')},
+                        status=status.HTTP_400_BAD_REQUEST)

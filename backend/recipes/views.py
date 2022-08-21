@@ -107,11 +107,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Ваша корзина пуста'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        shop_list = 'Список покупок \n'
+        shop_list = 'Список покупок \n\n'
         for ingredient in ingredients:
             shop_list += (
-                f"{ingredient['ingredient__name']} - "
-                f"{ingredient['amount__sum']}, "
-                f"{ingredient['ingredient__measurement_unit']}. \n"
+                f"{ingredient['ingredient__name']} "
+                f"({ingredient['ingredient__measurement_unit']}) - "
+                f"{ingredient['amount__sum']}\n"
             )
         return HttpResponse(shop_list, content_type='text/plain')
