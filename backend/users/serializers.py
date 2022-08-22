@@ -1,10 +1,10 @@
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import gettext_lazy as _
-from recipes.models import Recipe
 from rest_framework import serializers
 
 from .models import Follow, User
+from recipes.models import Recipe
 
 
 class UserSerializer(serializers.ModelSerializer):

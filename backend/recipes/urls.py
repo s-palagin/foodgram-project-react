@@ -5,25 +5,18 @@ from .views import IngredientViewSet, RecipeViewSet, TagViewSet
 
 app_name = 'recipes'
 
-
-router_tags = routers.DefaultRouter()
-router_tags.register(
-    'tags', TagViewSet, basename='tags'
-)
-
-router_ingredients = routers.DefaultRouter()
-router_ingredients.register(
-    'ingredients', IngredientViewSet, basename='ingredients'
-)
-
 router_recipe = routers.DefaultRouter()
 router_recipe.register(
     'recipes', RecipeViewSet, basename='recipes'
 )
+router_recipe.register(
+    'ingredients', IngredientViewSet, basename='ingredients'
+)
+router_recipe.register(
+    'tags', TagViewSet, basename='tags'
+)
 
 patterns = [
-    path('', include(router_tags.urls)),
-    path('', include(router_ingredients.urls)),
     path('', include(router_recipe.urls)),
 ]
 

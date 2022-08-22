@@ -1,7 +1,11 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Tag)
+
+from .models import (
+    Favorite, Ingredient, Recipe, RecipeIngredient,
+    ShoppingCart, Tag
+)
 
 
 @admin.register(Tag)
@@ -34,6 +38,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientsInline,)
 
     @staticmethod
+    @admin.display(description=_('Количество добавлений в избранное'))
     def in_favorites(obj):
         return obj.favorites.all().count()
 
@@ -48,9 +53,9 @@ class IdUserAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(IdUserAdmin):
-    ...
+    pass
 
 
 @admin.register(Favorite)
 class Favorite(IdUserAdmin):
-    ...
+    pass

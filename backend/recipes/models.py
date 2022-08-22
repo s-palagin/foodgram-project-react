@@ -10,7 +10,7 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(
         verbose_name=_('Название'),
-        max_length=150,
+        max_length=10,
         unique=True,
         null=False,
         help_text=_('Название тега'),
@@ -115,7 +115,6 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -128,9 +127,9 @@ class RecipeIngredient(models.Model):
         related_name='amounts',
         verbose_name=_('Ингредиент'),
     )
-    amount = models.PositiveSmallIntegerField(
+    amount = models.FloatField(
         validators=(MinValueValidator(
-            1,
+            0.1,
             message='Укажите количество больше нуля!',
         ),),
         verbose_name=_('Количество'),
@@ -143,7 +142,7 @@ class RecipeIngredient(models.Model):
                 fields=('recipe', 'ingredient',),
                 name='recipe_ingredient_exists'),
             models.CheckConstraint(
-                check=models.Q(amount__gte=1),
+                check=models.Q(amount__gt=0),
                 name='amount_gte_1'),
         )
         verbose_name = _('Ингредиент в рецепте')
@@ -168,8 +167,10 @@ class Favorite(models.Model):
         verbose_name = _('Избранное')
         verbose_name_plural = _('Избранные')
         constraints = [
-            models.UniqueConstraint(fields=['user', 'recipe'],
-                                    name='unique favorite')
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique favorite'
+            )
         ]
 
 
@@ -191,6 +192,8 @@ class ShoppingCart(models.Model):
         verbose_name = _('Корзина')
         verbose_name_plural = _('Корзина')
         constraints = [
-            models.UniqueConstraint(fields=['user', 'recipe'],
-                                    name='unique shopping cart')
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique shopping cart'
+            )
         ]

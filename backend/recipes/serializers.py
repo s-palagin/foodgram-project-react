@@ -1,10 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from users.serializers import BriefRecipeSerializer, UserSerializer
 
-from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Tag)
+from .models import (
+    Favorite, Ingredient, Recipe, RecipeIngredient,
+    ShoppingCart, Tag
+)
+from users.serializers import BriefRecipeSerializer, UserSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -12,13 +14,13 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = '__all__'
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -126,11 +128,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def create_ingredients(ingredients, recipe):
+        new_ingredients = []
         for ingredient in ingredients:
-            RecipeIngredient.objects.create(
-                recipe=recipe, ingredient=ingredient['id'],
+            adding_ingredient = RecipeIngredient(
+                recipe=recipe,
+                ingredient=ingredient['id'],
                 amount=ingredient['amount']
             )
+            new_ingredients.append(adding_ingredient)
+        RecipeIngredient.objects.bulk_create(new_ingredients)
 
     @staticmethod
     def create_tags(tags, recipe):

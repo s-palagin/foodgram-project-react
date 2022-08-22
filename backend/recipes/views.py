@@ -8,13 +8,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import IngredientSearchFilter, RecipeFilter
-from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Tag)
+from .models import (
+    Favorite, Ingredient, Recipe, RecipeIngredient,
+    ShoppingCart, Tag
+)
 from .pagination import CustomPageNumberPagination
-from .permissions import isAuthorOrAdmin
-from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipeListSerializer, RecipeSerializer,
-                          ShoppingCartSerializer, TagSerializer)
+from .permissions import IsAuthorOrAdmin
+from .serializers import (
+    FavoriteSerializer, IngredientSerializer, RecipeListSerializer,
+    RecipeSerializer, ShoppingCartSerializer, TagSerializer
+)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -53,22 +56,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         elif self.action == 'create':
             self.permission_classes = [IsAuthenticated]
         else:
-            self.permission_classes = [isAuthorOrAdmin]
+            self.permission_classes = [IsAuthorOrAdmin]
         return super().get_permissions()
 
     @action(detail=True, methods=['post'],
-            permission_classes=[IsAuthenticated])
-    def favorite(self, request, pk=None):
+            permission_classes=[IsAuthenticated],
+            url_path='favorite')
+    def create_favorite(self, request, pk=None):
         data = {'user': request.user.id, 'recipe': pk}
-        serializer = FavoriteSerializer(data=data,
-                                        context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = FavoriteSerializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @favorite.mapping.delete
-    def favorite_delete(self, request, pk=None):
+    @create_favorite.mapping.delete
+    def delete_favorite(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         favorite = get_object_or_404(Favorite, user=user, recipe=recipe)
@@ -76,18 +81,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'],
-            permission_classes=[IsAuthenticated])
-    def shopping_cart(self, request, pk=None):
+            permission_classes=[IsAuthenticated],
+            url_path='shopping_cart')
+    def add_shopping_cart(self, request, pk=None):
         data = {'user': request.user.id, 'recipe': pk}
-        serializer = ShoppingCartSerializer(data=data,
-                                            context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = ShoppingCartSerializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @shopping_cart.mapping.delete
-    def shopping_cart_delete(self, request, pk=None):
+    @add_shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         cart = get_object_or_404(ShoppingCart, user=user, recipe=recipe)
@@ -104,8 +111,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).annotate(Sum('amount'))
 
         if not ingredients:
-            return Response({'error': 'Ваша корзина пуста'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Ваша корзина пуста'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         shop_list = 'Список покупок \n\n'
         for ingredient in ingredients:
