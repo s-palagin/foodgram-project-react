@@ -9,14 +9,18 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: sergpol/foodram_frontend:latest
+    container_name: frontend
+    dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - db
   
   backend:
-    build: ../backend
+    image: sergpol/foodgram_backend:latest
+    container_name: backend
+    dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/app/static/
@@ -36,6 +40,8 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
+    depends_on:
+      - backend
 
 volumes:
   static_value:
