@@ -10,7 +10,7 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(
         verbose_name=_('Название'),
-        max_length=10,
+        max_length=15,
         unique=True,
         null=False,
         help_text=_('Название тега'),
@@ -47,7 +47,7 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         verbose_name=_('Единица измерения'),
-        max_length=50,
+        max_length=10,
         blank=False,
         help_text=_('Введите единицу измерения'),
     )
@@ -143,7 +143,7 @@ class RecipeIngredient(models.Model):
                 name='recipe_ingredient_exists'),
             models.CheckConstraint(
                 check=models.Q(amount__gt=0),
-                name='amount_gte_1'),
+                name='amount_gt_0'),
         )
         verbose_name = _('Ингредиент в рецепте')
         verbose_name_plural = _('Ингредиенты в рецепте')

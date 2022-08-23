@@ -18,6 +18,7 @@ from .serializers import (
     FavoriteSerializer, IngredientSerializer, RecipeListSerializer,
     RecipeSerializer, ShoppingCartSerializer, TagSerializer
 )
+from .utils import create_shopping_list
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -83,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'],
             permission_classes=[IsAuthenticated],
             url_path='shopping_cart')
-    def add_shopping_cart(self, request, pk=None):
+    def add_to_shopping_cart(self, request, pk=None):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = ShoppingCartSerializer(
             data=data,
@@ -93,8 +94,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @add_shopping_cart.mapping.delete
-    def delete_shopping_cart(self, request, pk=None):
+    @add_to_shopping_cart.mapping.delete
+    def delete_from_shopping_cart(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         cart = get_object_or_404(ShoppingCart, user=user, recipe=recipe)
@@ -116,11 +117,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        shop_list = 'Список покупок \n\n'
-        for ingredient in ingredients:
-            shop_list += (
-                f"{ingredient['ingredient__name']} "
-                f"({ingredient['ingredient__measurement_unit']}) - "
-                f"{ingredient['amount__sum']}\n"
-            )
-        return HttpResponse(shop_list, content_type='text/plain')
+        return HttpResponse(
+            create_shopping_list(ingredients),
+            content_type='text/plain'
+        )

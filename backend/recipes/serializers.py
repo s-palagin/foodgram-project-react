@@ -59,7 +59,16 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'author',
+            'text',
+            'tags',
+            'ingredients',
+            'image',
+            'cooking_time'
+        )
 
     def validate(self, data):
         required_filds = [
@@ -153,7 +162,19 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'author',
+            'text',
+            'tags',
+            'ingredients',
+            'image',
+            'cooking_time',
+            'is_favorited',
+            'is_in_shopping_cart'
+        )
+
 
     def get_ingredients(self, obj):
         ingredients = RecipeIngredient.objects.filter(recipe=obj)
@@ -185,7 +206,7 @@ class FavoriteSerializer(ModelSerializerWithRepresentashion):
 
     class Meta:
         model = Favorite
-        fields = '__all__'
+        fields = ('id', 'user', 'recipe')
 
     def validate(self, data):
         request = self.context.get('request')
@@ -201,7 +222,7 @@ class ShoppingCartSerializer(ModelSerializerWithRepresentashion):
 
     class Meta:
         model = ShoppingCart
-        fields = '__all__'
+        fields = ('id', 'user', 'recipe')
 
     def validate(self, data):
         request = self.context.get('request')
