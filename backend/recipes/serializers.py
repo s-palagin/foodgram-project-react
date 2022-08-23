@@ -175,7 +175,6 @@ class RecipeListSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart'
         )
 
-
     def get_ingredients(self, obj):
         ingredients = RecipeIngredient.objects.filter(recipe=obj)
         return RecipeIngredientSerializer(ingredients, many=True).data
