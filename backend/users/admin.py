@@ -27,7 +27,8 @@ class UserAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if obj.pk:
-            obj.set_password(obj.password)
+            if 'pbkdf2_sha256$' not in obj.password:
+                obj.set_password(obj.password)
             obj.is_staff = True if obj.role == 'admin' else False
             obj.is_superuser = True if obj.role == 'admin' else False
         obj.save()
