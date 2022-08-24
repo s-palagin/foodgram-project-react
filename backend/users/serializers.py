@@ -8,9 +8,11 @@ from recipes.models import Recipe
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         fields = ('id', 'username', 'email', 'first_name', 'last_name',
-                  'password')
+                  'password', 'is_subscribed')
         model = User
         extra_kwargs = {
             'password': {'write_only': True, 'required': True, },
@@ -35,6 +37,12 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
         return value
+    
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if not user:
+            return False
+        return Follow.objects.filter(user=user, author=obj.author_id).exists()
 
 
 class UserMeSerializer(UserSerializer):
