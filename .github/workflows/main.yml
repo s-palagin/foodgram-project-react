@@ -71,6 +71,7 @@ jobs:
           script: |
             sudo docker-compose stop
             sudo docker-compose rm -f backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             rm -f .env
             touch .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
