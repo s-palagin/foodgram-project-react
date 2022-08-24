@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
         return value
-    
+
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if not user:
