@@ -39,10 +39,13 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if not user or not isinstance(obj, Recipe):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, author=obj.author_id).exists()
+        return Follow.objects.filter(
+            user=self.context['request'].user,
+            author=obj
+        ).exists()
 
 
 class UserMeSerializer(UserSerializer):
