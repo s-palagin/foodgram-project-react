@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        if not user or isinstance(obj, User):
+        if not user or not isinstance(obj, Recipe):
             return False
         return Follow.objects.filter(user=user, author=obj.author_id).exists()
 
