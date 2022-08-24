@@ -8,7 +8,7 @@ from recipes.models import Recipe
 
 
 class UserSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         fields = ('id', 'username', 'email', 'first_name', 'last_name',
