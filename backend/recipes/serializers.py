@@ -72,12 +72,12 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         required_filds = [
             'name', 'text', 'cooking_time',
-            'image', 'tags', 'ingredients',
+            'tags', 'ingredients',
         ]
         for field in required_filds:
             if not data.get(field):
                 raise serializers.ValidationError(
-                    f'{field}: _(Обязательное поле)'
+                    f'{field}: ' + _('Обязательное поле')
                 )
 
         ingredients = data.get('ingredients')
@@ -89,7 +89,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             for field in required_ingredient_filds:
                 if not ingredient.get(field):
                     raise serializers.ValidationError(
-                        f'{field}: _(Обязательное поле в ingredients)'
+                        f'{field}: ' + _('Обязательное поле в ingredients')
                     )
             ingredient_id = ingredient.get('id')
             amount = ingredient.get('amount')
