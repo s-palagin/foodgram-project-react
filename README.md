@@ -81,7 +81,3 @@ docker-compose exec backend python manage.py collectstatic --noinput
 API документация доступна по ссылке (создана с помощью redoc):
 
 [Foodgram/redoc](http://foodgram-project.ddns.net/api/docs/)
-
-### Администратор сайта
-login: admin@admin.py
-pass: 0000Admin1111
